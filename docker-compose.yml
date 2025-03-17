@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  # Node.js 应用服务
+  app:
+    build: .
+    ports:
+      - "8360:8360"
+    depends_on:
+      - mysql
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=nideshop
+    networks:
+      - nideshop-network
+    restart: always
+
+  # MySQL 服务
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=nideshop
+    volumes:
+      - ./nideshop.sql:/docker-entrypoint-initdb.d/nideshop.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - nideshop-network
+    restart: always
+
+networks:
+  nideshop-network:
+    driver: bridge 
